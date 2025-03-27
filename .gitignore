@@ -1,4 +1,4 @@
-# Ignore Obsidian config
+# ignore Obsidian config
 .obsidian/
 
 # ignore env file where i'm storing api keys locally

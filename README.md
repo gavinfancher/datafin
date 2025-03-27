@@ -1,5 +1,8 @@
 # DataFin
 
-this is a test of obsidian in md editing
+Welcome! A guy on medium once said "some people have lives others have data"[^1].
 
-more test
+
+
+
+[^1]: if you can find who said that please let me know and ill cite him!
