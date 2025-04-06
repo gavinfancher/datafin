@@ -1,0 +1,7 @@
+python-dotenv
+urllib3<2.0.0
+requests
+sqlalchemy
+pandas
+python-dateutil
+mysql-connector-python
