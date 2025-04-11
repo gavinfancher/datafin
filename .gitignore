@@ -1,5 +1,6 @@
 # ignore Obsidian config
 .obsidian/
+__pycache__/
 
 # ignore env file where i'm storing api keys locally
 .env
