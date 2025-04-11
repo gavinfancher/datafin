@@ -88,7 +88,6 @@ class FMPClient:
 
 class Utils:
     def format_date_time_object(
-            self,
             datetime_object: datetime,
             with_time: bool = False
     ) -> str:
@@ -123,68 +122,7 @@ class Utils:
     
 
 
-
-
-
-class AwsClient:
-    def __init__(
-            self,
-            aws_account_access_key,
-            aws_secret_account_access_key
-    ):
-        aws_account_access_key = self.access_key
-        aws_secret_account_access_key = self.secret_key
-
-    def s3_client(
-            aws_account_access_key,
-            aws_secret_account_access_key,
-            region
-    ):
-        client_instance = boto3.client(
-            's3',
-            aws_access_key_id = aws_account_access_key,
-            aws_secret_access_key = aws_secret_account_access_key,
-            region_name = region
-        )
-        return client_instance
-
-    def json_post_to_s3(
-            instance,
-            data,
-            bucket_name,
-            file_path,
-            file_name,
-    ):
-        instance.put_object(
-            Bucket = bucket_name,
-            Key = file_path + '/' + file_name + '.json',
-            Body = json.dumps(data),
-            ContentType = 'application/json'
-        )
-
-    def json_get_from_s3(
-            instance,
-            bucket_name,
-            file_path,
-            file_name,
-            raw=False
-    ):
-        raw_object = instance.get_object(
-            Bucket = bucket_name,
-            Key = file_path + '/' + file_name + '.json',
-        )
-
-        if raw == True:
-            return raw_object
-        
-        else:
-            parsed_object = raw_object['Body'].read().decode('utf-8')
-            return parsed_object
-        
-
-
-
-class AwsClient:
+class AWSClient:
     def __init__(
             self,
             aws_account_access_key,
@@ -205,7 +143,7 @@ class AwsClient:
         )
         return client_instance
 
-    def json_post_to_s3(
+    def post_json_to_s3(
             self,
             instance,
             data,
@@ -220,7 +158,7 @@ class AwsClient:
             ContentType = 'application/json'
         )
 
-    def json_get_from_s3(
+    def get_json_from_s3(
             self,
             instance,
             bucket_name,
@@ -237,5 +175,41 @@ class AwsClient:
             return raw_object
         
         else:
-            parsed_object = raw_object['Body'].read().decode('utf-8')
+            parsed_object = json.loads(raw_object['Body'].read().decode('utf-8'))
             return parsed_object
+        
+
+    def get_csv_from_s3(
+            self,
+            instance,
+            bucket_name,
+            file_path,
+            file_name,
+            as_list = False,
+            raw = False
+    ):
+        raw_object = instance.get_object(
+            Bucket = bucket_name,
+            Key = file_path + '/' + file_name + '.csv',
+        )
+
+        if raw == True:
+            return raw_object
+        
+        else:
+            csv_data = raw_object['Body'].read().decode('utf-8')
+            
+            if as_list:
+                import csv
+                from io import StringIO
+                
+                csv_list = []
+                csv_file = StringIO(csv_data)
+                csv_reader = csv.reader(csv_file)
+                
+                for row in csv_reader:
+                    csv_list.append(row)
+                    
+                return csv_list
+            
+            return csv_data
