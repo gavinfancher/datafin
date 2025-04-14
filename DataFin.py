@@ -62,14 +62,14 @@ class FMPClient:
             _from=None,
             _too=None
     ):
-        today = Utils.now()
+        today = _Utils.now()
         time_delta_5_year = today - relativedelta(years=5) + timedelta(days=1)
 
         function_specific_url = 'historical-price-eod/full'
         url = self.base_url + function_specific_url
 
-        today_param = Utils.format_date_time_object(today)
-        time_delta_param = Utils.format_date_time_object(time_delta_5_year)
+        today_param = _Utils.format_date_time_object(today)
+        time_delta_param = _Utils.format_date_time_object(time_delta_5_year)
 
         params = {
             "symbol": symbol,
@@ -81,12 +81,33 @@ class FMPClient:
         response = self.api_call_get(url, params=params)
 
         return response
+    
+    def get_live_price(
+             self,
+            symbol,
+            _from=None,
+            _too=None
+    ):
+        today = _Utils.now()
+        time_delta_5_year = today - relativedelta(years=5) + timedelta(days=1)
+
+        function_specific_url = 'quote-short?'
+        url = self.base_url + function_specific_url
+
+        params = {
+            "symbol": symbol,
+            "apikey": self.api_key,
+        }
+
+        response = self.api_call_get(url, params=params)
+
+        return response
 
 
 
 
 
-class Utils:
+class _Utils:
     def format_date_time_object(
             datetime_object: datetime,
             with_time: bool = False
