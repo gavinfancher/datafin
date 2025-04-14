@@ -18,9 +18,9 @@ symbol = sys.argv[1]
 print(symbol)
 
 try:
-    print("Press Ctrl+C to stop the program")
+    print("\nPress Ctrl+C to stop the program")
     print(f"{'Price':<10} {'Change':<10}")
-    print("-" * 10)
+    print("-" * 32)
     
     while True:
         amzn_day_start = fmp.get_end_of_day_full('amzn')[0]['open']
