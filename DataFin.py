@@ -19,6 +19,7 @@ class FMPClient:
         self.api_key = api_key
         self.base_url = 'https://financialmodelingprep.com/stable/'
 
+
     def api_call_get(
             self,
             url: str, 
@@ -56,6 +57,7 @@ class FMPClient:
                     return response.json()
                 
     
+    
     def get_end_of_day_full(
             self,
             symbol,
@@ -82,6 +84,7 @@ class FMPClient:
 
         return response
     
+
     def get_live_price(
              self,
             symbol,
@@ -102,44 +105,6 @@ class FMPClient:
         response = self.api_call_get(url, params=params)
 
         return response
-
-
-
-
-
-class _Utils:
-    def format_date_time_object(
-            datetime_object: datetime,
-            with_time: bool = False
-    ) -> str:
-        """
-        DEPS:
-            datetime -- in requirements.txt
-        DEF:
-            format a datetime object as a string.
-        
-        ARGS:
-            datetime_object: the datetime object to format
-            with_time: whether to include the time in the formatted string
-        
-        RETURNS:
-            a formatted date string
-        """
-
-        if with_time:
-            return datetime_object.strftime("%Y-%m-%d %H:%M:%S")
-        else:
-            return datetime_object.strftime("%Y-%m-%d")
-    
-    def time_delta(
-            test
-    ):
-        #time_delta_5_year = today - relativedelta(years=5) + timedelta(days=1)
-        pass
-        
-
-    def now():
-        return datetime.now()
     
 
 
@@ -200,37 +165,42 @@ class AWSClient:
             return parsed_object
         
 
-    def get_csv_from_s3(
-            self,
-            instance,
-            bucket_name,
-            file_path,
-            file_name,
-            as_list = False,
-            raw = False
-    ):
-        raw_object = instance.get_object(
-            Bucket = bucket_name,
-            Key = file_path + '/' + file_name + '.csv',
-        )
 
-        if raw == True:
-            return raw_object
+
+
+
+
+
+
+class _Utils:
+    def format_date_time_object(
+            datetime_object: datetime,
+            with_time: bool = False
+    ) -> str:
+        """
+        DEPS:
+            datetime -- in requirements.txt
+        DEF:
+            format a datetime object as a string.
         
+        ARGS:
+            datetime_object: the datetime object to format
+            with_time: whether to include the time in the formatted string
+        
+        RETURNS:
+            a formatted date string
+        """
+
+        if with_time:
+            return datetime_object.strftime("%Y-%m-%d %H:%M:%S")
         else:
-            csv_data = raw_object['Body'].read().decode('utf-8')
-            
-            if as_list:
-                import csv
-                from io import StringIO
-                
-                csv_list = []
-                csv_file = StringIO(csv_data)
-                csv_reader = csv.reader(csv_file)
-                
-                for row in csv_reader:
-                    csv_list.append(row)
-                    
-                return csv_list
-            
-            return csv_data
+            return datetime_object.strftime("%Y-%m-%d")
+    
+
+    def five_year_lag(self):
+        time_delta_5_year = self.now() - relativedelta(years=5) + timedelta(days=1)
+        return time_delta_5_year
+        
+
+    def now(self):
+        return datetime.now()
