@@ -6,7 +6,7 @@ import time
 
 dotenv.load_dotenv()
 
-## load environment variables from .env
+
 fmp_api_key = os.getenv('FMP_API_KEY')
 
 
@@ -24,42 +24,23 @@ aws = AWSClient(
 
 s3 = aws.s3_client('us-east-1')
 
-nasdaq = aws.get_json_from_s3(
+combo_symbols = aws.get_json_from_s3(
     s3,
     s3_bucket,
     'ref-data',
-    'nasdaq'
+    'combo-snp-nas'
 )['data']
 
-snp = aws.get_json_from_s3(
-    s3,
-    s3_bucket,
-    'ref-data',
-    'snp500'
-)['data']
-
-
-# amzn_data = fmp.get_end_of_day_full('amzn')
-
-# aws.post_json_to_s3(
-#     s3,
-#     amzn_data,
-#     s3_bucket,
-#     'test-eod-data',
-#     'amzn'
-# )
-
-
-for symbol in snp:
+for symbol in combo_symbols:
     start = time.time()
     data = fmp.get_end_of_day_full(symbol)
     aws.post_json_to_s3(
         s3,
         data,
         s3_bucket,
-        'test-eod-data-local',
+        'test-combo-eod-test',
         f'{symbol}'
     )
     end = time.time()
     elapsed_time = end - start
-    print(f'wrote {symbol} to s3 -- took {elapsed_time:.2f}s')
+    print(f'{symbol:<10} done, took {elapsed_time:>6.2f} seconds')
