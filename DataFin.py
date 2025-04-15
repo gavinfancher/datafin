@@ -55,55 +55,83 @@ class FMPClient:
                     return "empty response"
                 else:
                     return response.json()
-                
+
     
-    
-    def get_end_of_day_full(
+    def get_eod_full(
             self,
             symbol,
-            _from=None,
-            _too=None
+            _from = None,
+            _too = None
     ):
-        today = _Utils.now()
-        time_delta_5_year = today - relativedelta(years=5) + timedelta(days=1)
 
         function_specific_url = 'historical-price-eod/full'
         url = self.base_url + function_specific_url
 
-        today_param = _Utils.format_date_time_object(today)
-        time_delta_param = _Utils.format_date_time_object(time_delta_5_year)
+        to_param = _Utils.format_date_time_object(_Utils.today())
+        from_param = _Utils.format_date_time_object(_Utils.five_year_lag())
 
         params = {
             "symbol": symbol,
             "apikey": self.api_key,
-            "from": time_delta_param,
-            "to": today_param
+            "from": from_param,
+            "to": to_param
         }
 
         response = self.api_call_get(url, params=params)
-
         return response
     
 
-    def get_live_price(
-             self,
+    def get_live_quote(
+            self,
             symbol,
-            _from=None,
-            _too=None
+            short = True
     ):
-        today = _Utils.now()
-        time_delta_5_year = today - relativedelta(years=5) + timedelta(days=1)
+        if short is not True:
+            function_specific_url = 'quote?'
+            url = self.base_url + function_specific_url
 
-        function_specific_url = 'quote-short?'
+            params = {
+                "symbol": symbol,
+                "apikey": self.api_key,
+            }
+
+            response = self.api_call_get(url, params=params)
+            return response
+        
+        else:
+            function_specific_url = 'quote-short?'
+            url = self.base_url + function_specific_url
+
+            params = {
+                "symbol": symbol,
+                "apikey": self.api_key,
+            }
+
+            response = self.api_call_get(url, params=params)
+            return response
+    
+
+    def get_forex_eod_full(
+            self,
+            pair,
+            _from = None,
+            _too = None
+    ):
+
+        function_specific_url = 'historical-price-eod/full'
         url = self.base_url + function_specific_url
 
+        to_param = _Utils.format_date_time_object(_Utils.today())
+        from_param = _Utils.format_date_time_object(_Utils.five_year_lag())
+
         params = {
-            "symbol": symbol,
+            "symbol": pair,
             "apikey": self.api_key,
+            "from": from_param,
+            "to": to_param
         }
 
         response = self.api_call_get(url, params=params)
-
         return response
     
 
@@ -168,10 +196,6 @@ class AWSClient:
 
 
 
-
-
-
-
 class _Utils:
     def format_date_time_object(
             datetime_object: datetime,
@@ -202,5 +226,5 @@ class _Utils:
         return time_delta_5_year
         
 
-    def now(self):
+    def today(self):
         return datetime.now()
