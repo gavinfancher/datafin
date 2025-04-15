@@ -57,18 +57,59 @@ class FMPClient:
                     return response.json()
 
     
-    def get_eod_full(
+    def get_eod(
             self,
             symbol,
             _from = None,
-            _too = None
+            _too = None,
+            full = True
     ):
 
-        function_specific_url = 'historical-price-eod/full'
-        url = self.base_url + function_specific_url
+        if full is not True:
+            function_specific_endpoint = 'historical-price-eod/light'
+            url = self.base_url + function_specific_endpoint
 
+            to_param = _Utils.format_date_time_object(_Utils.today())
+            from_param = _Utils.format_date_time_object(_Utils.five_year_lag())
+        
+            params = {
+                "symbol": symbol,
+                "apikey": self.api_key,
+                "from": from_param,
+                "to": to_param
+            }
+
+            response = self.api_call_get(url, params=params)
+            return response
+        
+        else:
+            function_specific_endpoint = 'historical-price-eod/full'
+            url = self.base_url + function_specific_endpoint
+
+            to_param = _Utils.format_date_time_object(_Utils.today())
+            from_param = _Utils.format_date_time_object(_Utils.five_year_lag())
+        
+            params = {
+                "symbol": symbol,
+                "apikey": self.api_key,
+                "from": from_param,
+                "to": to_param
+            }
+
+            response = self.api_call_get(url, params=params)
+            return response
+    
+    def get_five_min(
+            self,
+            symbol,
+            _from = None,
+            _to = None
+    ):
+        function_specific_endpoint = 'historical-chart/5min'
+        url = self.base_url + function_specific_endpoint
+
+        from_param = _Utils.format_date_time_object(_Utils.today())
         to_param = _Utils.format_date_time_object(_Utils.today())
-        from_param = _Utils.format_date_time_object(_Utils.five_year_lag())
 
         params = {
             "symbol": symbol,
@@ -79,7 +120,7 @@ class FMPClient:
 
         response = self.api_call_get(url, params=params)
         return response
-    
+
 
     def get_live_quote(
             self,
@@ -111,18 +152,59 @@ class FMPClient:
             return response
     
 
-    def get_forex_eod_full(
+    def get_eod_forex(
             self,
             pair,
             _from = None,
-            _too = None
+            _too = None,
+            full = True
     ):
+        if full is not True:
+            function_specific_endpoint = 'historical-price-eod/light'
+            url = self.base_url + function_specific_endpoint
 
-        function_specific_url = 'historical-price-eod/full'
-        url = self.base_url + function_specific_url
+            from_param = _Utils.format_date_time_object(_Utils.five_year_lag())
+            to_param = _Utils.format_date_time_object(_Utils.today())
 
+            params = {
+                "symbol": pair,
+                "apikey": self.api_key,
+                "from": from_param,
+                "to": to_param
+            }
+
+            response = self.api_call_get(url, params=params)
+            return response
+        
+        else:
+
+            function_specific_endpoint = 'historical-price-eod/full'
+            url = self.base_url + function_specific_endpoint
+
+            from_param = _Utils.format_date_time_object(_Utils.five_year_lag())
+            to_param = _Utils.format_date_time_object(_Utils.today())
+
+            params = {
+                "symbol": pair,
+                "apikey": self.api_key,
+                "from": from_param,
+                "to": to_param
+            }
+
+            response = self.api_call_get(url, params=params)
+            return response
+        
+    def get_five_min_forex(
+            self,
+            pair,
+            _from = None,
+            _to = None
+    ):
+        function_specific_endpoint = 'historical-chart/5min'
+        url = self.base_url + function_specific_endpoint
+
+        from_param = _Utils.format_date_time_object(_Utils.today())
         to_param = _Utils.format_date_time_object(_Utils.today())
-        from_param = _Utils.format_date_time_object(_Utils.five_year_lag())
 
         params = {
             "symbol": pair,
@@ -136,52 +218,50 @@ class FMPClient:
     
 
 
-class AWSClient:
+###########################################################
+
+
+
+class S3Client:
     def __init__(
             self,
             aws_account_access_key,
-            aws_secret_account_access_key
+            aws_secret_account_access_key,
+            region,
+            bucket_name
     ):
         self.access_key = aws_account_access_key
         self.secret_key = aws_secret_account_access_key
-
-    def s3_client(
-            self,
-            region
-    ):
-        client_instance = boto3.client(
+        self.region = region
+        self.bucket_name = bucket_name
+        self.client_instance = boto3.client(
             's3',
             aws_access_key_id = self.access_key,
             aws_secret_access_key = self.secret_key,
-            region_name = region
+            region_name = self.region
         )
-        return client_instance
 
-    def post_json_to_s3(
+    def json_post(
             self,
-            instance,
             data,
-            bucket_name,
             file_path,
             file_name,
     ):
-        instance.put_object(
-            Bucket = bucket_name,
+        self.client_instance.put_object(
+            Bucket = self.bucket_name,
             Key = file_path + '/' + file_name + '.json',
             Body = json.dumps(data),
             ContentType = 'application/json'
         )
 
-    def get_json_from_s3(
+    def json_get(
             self,
-            instance,
-            bucket_name,
             file_path,
             file_name,
             raw = False
     ):
-        raw_object = instance.get_object(
-            Bucket = bucket_name,
+        raw_object = self.client_instance.get_object(
+            Bucket = self.bucket_name,
             Key = file_path + '/' + file_name + '.json',
         )
 
@@ -193,6 +273,8 @@ class AWSClient:
             return parsed_object
         
 
+
+###########################################################
 
 
 
@@ -221,10 +303,10 @@ class _Utils:
             return datetime_object.strftime("%Y-%m-%d")
     
 
-    def five_year_lag(self):
-        time_delta_5_year = self.now() - relativedelta(years=5) + timedelta(days=1)
+    def five_year_lag():
+        time_delta_5_year = _Utils.today() - relativedelta(years=5) + timedelta(days=1)
         return time_delta_5_year
         
 
-    def today(self):
+    def today():
         return datetime.now()
