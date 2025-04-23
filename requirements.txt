@@ -6,3 +6,5 @@ pandas
 python-dateutil
 mysql-connector-python
 boto3
+pyarrow
+tqdm
