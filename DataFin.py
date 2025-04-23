@@ -4,6 +4,7 @@ from dateutil.relativedelta import relativedelta
 import requests
 import boto3
 import json
+import io
 
 
 class FMPClient:
@@ -271,6 +272,50 @@ class S3Client:
         else:
             parsed_object = json.loads(raw_object['Body'].read().decode('utf-8'))
             return parsed_object
+        
+    def parquet_post(
+            self,
+            dataframe,
+            file_path,
+            file_name,
+            save_local=False,
+            local_path=None
+    ):
+        """
+        Save a pandas DataFrame as a parquet file to S3
+        
+        Parameters:
+        -----------
+        dataframe : pandas.DataFrame
+            The DataFrame to save
+        file_path : str
+            S3 directory path
+        file_name : str
+            Name for the file (without extension)
+        save_local : bool, optional
+            Whether to save a local copy, defaults to False
+        local_path : str, optional
+            Path where to save local copy, defaults to None
+            
+        Returns:
+        --------
+        s3_url : str
+            The S3 URL of the saved file
+        """
+        s3_key = f"{file_path}/{file_name}.parquet"
+        
+        # Create a buffer to store the parquet file
+        buffer = io.BytesIO()
+        dataframe.to_parquet(buffer)
+        buffer.seek(0)
+        
+        # Upload to S3
+        self.client_instance.put_object(
+            Bucket=self.bucket_name,
+            Key=s3_key,
+            Body=buffer.getvalue(),
+            ContentType='application/octet-stream'
+        )
         
 
 
