@@ -5,3 +5,4 @@ datafin-venv/
 
 # ignore env file where i'm storing api keys locally
 .env
+2025-04-21-test.csv
