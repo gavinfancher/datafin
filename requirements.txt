@@ -9,3 +9,6 @@ boto3
 pyarrow
 tqdm
 setuptools
+
+## installs the datafin package
+-e ./datafin-package

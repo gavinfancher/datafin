@@ -1,5 +1,5 @@
 import io
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 
 import boto3
 import json
@@ -10,17 +10,16 @@ class S3Client:
     def __init__(
             self, 
             bucket_name: str = None,
-            aws_access_key_id: str = None,
-            aws_secret_access_key: str = None,
-            region_name: str = None,
+            aws_access_key_id: Optional[str] = None,
+            aws_secret_access_key: Optional[str] = None,
+            region_name: Optional[str] = None,
             is_polygon: bool = False
     ) -> None:
-        
         """
-        docs
+        Initialize S3 client with optional credentials.
+        If no credentials are provided, it will use the default AWS credentials.
         """
-            
-        self.bucket_name = None
+        self.bucket_name = bucket_name
         self.s3 = None
 
         config = Config(
@@ -44,7 +43,6 @@ class S3Client:
                 )
             )
         else: 
-            self.bucket_name = bucket_name
             self.s3 = session.client('s3', config=config)
 
     

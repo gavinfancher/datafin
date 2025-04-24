@@ -1,6 +1,9 @@
 # ignore directories
 .obsidian/
 __pycache__/
+datfin-venv/
+datfin-package/datafin/__pycache__/
+datfin-package/datafin.egg-info/
 
 # ignore env file where i'm storing api keys locally
 .env
