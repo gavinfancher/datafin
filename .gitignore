@@ -7,4 +7,5 @@ datfin-package/datafin.egg-info/
 
 # ignore env file where i'm storing api keys locally
 .env
+.DS_Store
 2025-04-21-test.csv
