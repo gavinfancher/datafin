@@ -17,6 +17,7 @@ class FMPClient:
 
         self.api_key = api_key
         self.base_url = 'https://financialmodelingprep.com/stable/'
+
         self.api = APICall(
             base_url=self.base_url,
             api_key=self.api_key
@@ -26,6 +27,7 @@ class FMPClient:
     #######################################################
     #######################################################
 
+
     def get_quote(
         self,
         symbol: str
@@ -33,7 +35,7 @@ class FMPClient:
         """
         docs
         """
-        endpoint = f'quote'
+        endpoint = 'quote'
         params = {
             'symbol': symbol,
             'apikey': self.api_key
@@ -45,6 +47,22 @@ class FMPClient:
         )
 
         return response
+
+
+#######################################################
+
+
+    # def get_tbill(
+    #         self,
+    # )
+
+
+
+
+
+
+
+
 
 
     def test():
