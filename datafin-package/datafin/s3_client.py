@@ -1,8 +1,8 @@
 import io
 from typing import Dict, Any, Optional
+import json
 
 import boto3
-import json
 import pandas as pd
 from botocore.config import Config
 
