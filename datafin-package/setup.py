@@ -9,6 +9,6 @@ setup(
         "pandas",
         "botocore"
     ],
-    python_requires=">=3.13",
+    python_requires=">=3.12",
     zip_safe=False,
 ) 
