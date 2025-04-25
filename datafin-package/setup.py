@@ -7,7 +7,8 @@ setup(
     install_requires=[
         "boto3",
         "pandas",
-        "botocore"
+        "botocore",
+        "requests"
     ],
     python_requires=">=3.12",
     zip_safe=False,
