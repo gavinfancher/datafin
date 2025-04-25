@@ -18,9 +18,9 @@ my_s3 = S3Client(
     region_name='us-east-1',
 )
 
-forex = my_s3.get_json(
-    'ref-data',
-    'forex-pairs'
+test = my_s3.get_json(
+    'test',
+    'test'
 )
 
-print(forex)
+print(test)

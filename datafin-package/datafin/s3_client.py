@@ -9,9 +9,9 @@ from botocore.config import Config
 class S3Client:
     def __init__(
             self, 
-            bucket_name: str = None,
-            aws_access_key_id: Optional[str] = None,
-            aws_secret_access_key: Optional[str] = None,
+            bucket_name: Optional[str] = None,
+            aws_access_key_id: str = None,
+            aws_secret_access_key: str = None,
             region_name: Optional[str] = None,
             is_polygon: bool = False
     ) -> None:
