@@ -1,9 +1,14 @@
 README.md
 setup.py
 datafin/__init__.py
+datafin/fmp_client.py
+datafin/polygon_client.py
 datafin/s3_client.py
 datafin.egg-info/PKG-INFO
 datafin.egg-info/SOURCES.txt
 datafin.egg-info/dependency_links.txt
+datafin.egg-info/not-zip-safe
 datafin.egg-info/requires.txt
 datafin.egg-info/top_level.txt
+datafin/utils/__init__.py
+datafin/utils/api_call.py
