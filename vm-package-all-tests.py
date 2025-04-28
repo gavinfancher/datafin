@@ -46,9 +46,11 @@ s3_test = my_s3.get_json(
     'test',
     'test'
 )
-print('\n' * 5)
-print(s3_test)
 
+print('--------------------------------')
+print('')
+print(s3_test)
+print('')
 
 #######################################################
 # FMP Client Test
@@ -62,8 +64,11 @@ fmp_client = FMPClient(
 fmp_test = fmp_client.get_quote(
     'AAPL'
 )
-print('\n' * 5)
+
+print('--------------------------------')
+print('')
 print(fmp_test)
+print('')
 
 
 #######################################################
@@ -79,8 +84,11 @@ polygon_test = polygon_client.get_eod_aggs(
     symbol='AAPL',
     date='2025-01-10'
 )
-print('\n' * 5)
+
+print('--------------------------------')
+print('')
 print(polygon_test)
+print('')
 
 
 #######################################################
@@ -89,18 +97,27 @@ print(polygon_test)
 
 
 ytd_trading_days = get_trading_days_ytd()
-print('\n' * 5)
+
+print('--------------------------------')
+print('')
 print(ytd_trading_days[:3])
+print('')
 
 trading_day_range = get_trading_days_range('2000-01-01', '2020-01-01')
-print('\n' * 5)
+print('--------------------------------')
+print('')
 print(trading_day_range[:3])
+print('')
 
 today_date = today()
 formatted_today_date = format_date(today_date)
-print('\n' * 5)
+print('--------------------------------')
+print('')
 print(formatted_today_date)
+print('')
 
 five_year_ago_date = get_5year_ago_date()
-print('\n' * 5)
+print('--------------------------------')
+print('')
 print(five_year_ago_date)
+print('')
