@@ -8,7 +8,8 @@ setup(
         "boto3",
         "pandas",
         "botocore",
-        "requests"
+        "requests",
+        "pandas_market_calendars"
     ],
     python_requires=">=3.12",
     zip_safe=False,
