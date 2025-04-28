@@ -3,7 +3,6 @@ setup.py
 datafin/__init__.py
 datafin/fmp_client.py
 datafin/polygon_client.py
-datafin/py.typed
 datafin/rds_client.py
 datafin/s3_client.py
 datafin.egg-info/PKG-INFO

@@ -5,6 +5,7 @@ import dotenv
 from datafin import S3Client                     # type: ignore
 from datafin import FMPClient                    # type: ignore
 from datafin import PolygonClient                # type: ignore
+from datafin import RDSClient                    # type: ignore
 from datafin.utils import (                      # type: ignore
     get_trading_days_ytd,
     get_trading_days_range,
@@ -28,6 +29,10 @@ aws_secret_key =  os.getenv('PERSONAL_AWS_SECRET_ACCESS_KEY_ID')
 polygon_api_key = os.getenv('POLYGON_API_KEY')
 polygon_access_key =  os.getenv('POLYGON_AWS_ACCESS_KEY_ID')
 polygon_access_key_secret_key =  os.getenv('POLYGON_AWS_SECRET_ACCESS_KEY_ID')
+
+rds_host_name = os.getenv('RDS_DB_HOST_CONNECTION_NAME')
+rds_username = os.getenv('RDS_DB_USERNAME')
+rds_password = os.getenv('RDS_DB_PASSWORD')
 
 
 #######################################################
@@ -120,4 +125,27 @@ five_year_ago_date = get_5year_ago_date()
 print('--------------------------------')
 print('')
 print(five_year_ago_date)
+print('')
+
+
+#######################################################
+# RDS Client Test
+#######################################################
+
+
+conn = RDSClient(
+    host_connection_name = rds_host_name,
+    user = rds_username,
+    password = rds_password
+)
+conn.use_database('test_db')
+conn.list_tables()
+df = conn.query('''
+SELECT * 
+FROM `eod-combo-test-1`
+LIMIT 10
+''')
+print('--------------------------------')
+print('')
+print(df)
 print('')

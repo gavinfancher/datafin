@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="datafin",
-    version="0.1.0",
+    version="0.4.0",
     packages=find_packages(),
     package_data={
         "datafin": ["py.typed"],
@@ -12,8 +12,9 @@ setup(
         "pandas",
         "botocore",
         "requests",
-        "pandas_market_calendars"
+        "pandas_market_calendars",
+        "sqlalchemy"
     ],
     python_requires=">=3.12",
     zip_safe=False,
-) 
+)
