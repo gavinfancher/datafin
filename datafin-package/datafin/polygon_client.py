@@ -1,8 +1,4 @@
-
 from polygon import RESTClient
-
-
-
 
 
 
@@ -15,7 +11,15 @@ class PolygonClient:
         self.client = RESTClient(api_key=self.api_key)
 
 
-    def get_1min_aggs(
-            self
+    def get_eod_aggs(
+            self,
+            date: str,
+            symbol: str
     ):
-        pass
+        response = self.client.get_daily_open_close_agg(
+            ticker=symbol,
+            date=date,
+            adjusted="true",
+        )
+
+        return response
