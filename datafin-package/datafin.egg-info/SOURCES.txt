@@ -3,6 +3,8 @@ setup.py
 datafin/__init__.py
 datafin/fmp_client.py
 datafin/polygon_client.py
+datafin/py.typed
+datafin/rds_client.py
 datafin/s3_client.py
 datafin.egg-info/PKG-INFO
 datafin.egg-info/SOURCES.txt
@@ -12,3 +14,4 @@ datafin.egg-info/requires.txt
 datafin.egg-info/top_level.txt
 datafin/utils/__init__.py
 datafin/utils/api_call.py
+datafin/utils/datetime_utils.py

@@ -1,6 +1,7 @@
 import datetime
 import pandas_market_calendars as mcal
 from typing import List, Optional, Tuple
+from dateutil.relativedelta import relativedelta
 
 
 def get_trading_days_ytd(
@@ -97,10 +98,13 @@ def today(format_date: bool = False) -> str:
 #######################################################
 
 
-def get_5year_ago_date() -> datetime.date:
+def get_5year_ago_date() -> str:
     
     """
     docs
     """
 
-    return datetime.datetime.now() - datetime.timedelta(years=5) + datetime.timedelta(days=1)
+    today = datetime.datetime.now()
+    five_years_ago = today - relativedelta(years=5)
+    result = five_years_ago + datetime.timedelta(days=1)
+    return result.strftime('%Y-%m-%d')
