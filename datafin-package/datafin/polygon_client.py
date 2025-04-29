@@ -24,3 +24,23 @@ class PolygonClient:
 
         return response
     
+
+    def get_eod_second_aggs(
+            self,
+            symbol: str,
+            date: str
+    ):
+
+        aggs = []
+        for a in self.client.list_aggs(
+            symbol,
+            1,
+            "second",
+            date,
+            date,
+            adjusted="true",
+            sort="asc",
+        ):
+            aggs.append(a)
+
+        return aggs
