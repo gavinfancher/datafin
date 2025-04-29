@@ -92,6 +92,24 @@ def today(format_date: bool = False) -> str:
         return datetime.datetime.now().strftime('%Y-%m-%d')
     else:
         return datetime.datetime.now()
+    
+
+#######################################################
+#######################################################
+
+
+def yesterday(format_date: bool = False) -> str:
+    
+    """
+    docs
+    """
+    
+    yesterday_date = today() - datetime.timedelta(days=1)
+    
+    if format_date:
+        return yesterday_date.strftime('%Y-%m-%d')
+    else:
+        return yesterday_date
 
 
 #######################################################
@@ -108,3 +126,19 @@ def get_5year_ago_date() -> str:
     five_years_ago = today - relativedelta(years=5)
     result = five_years_ago + datetime.timedelta(days=1)
     return result.strftime('%Y-%m-%d')
+
+
+#######################################################
+#######################################################
+
+
+def string_formating(number: int) -> str:
+    
+    """
+    docs
+    """
+
+    if number < 10:
+        return f"0{number}"
+    else:
+        return str(number)

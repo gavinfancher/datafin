@@ -52,17 +52,19 @@ my-bucket/
 │   │       └── raw/
 │   └── polygon/
 │       ├── equities/
-│       ├── mini-transform/
-│       │   └── year=2025/
-│       │       └── month=04/
-│       │           └── mini-transform-2025-04-XX.parquet  # XX represents the day
-│       └── raw/
-│           └── year=2025/
-│               └── month=04/
-│                   └── raw-2025-04-XX.parquet             # XX represents the day
+│       │   ├── mini-transform/
+│       │   └── raw/
+│       │       └── year=2025/
+│       │           └── month=04/
+│       │               └── 2025-04-XX.parquet        ## where XX is the date
 └── ref-data/
     ├── forex-pairs.json
     ├── nasdaq100-constituents.json
     ├── snp-nas-constituents-combo.json
     └── snp500-constituents.json
+```
+
+
+```python
+data_04_25['date_time'] = pd.to_datetime(data_04_25['window_start'], unit='ns').dt.tz_localize('UTC').dt.tz_convert('America/New_York').dt.tz_localize(None)
 ```

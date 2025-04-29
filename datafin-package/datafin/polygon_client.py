@@ -23,3 +23,4 @@ class PolygonClient:
         )
 
         return response
+    

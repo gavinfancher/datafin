@@ -8,7 +8,9 @@ from .datetime_utils import (
     get_trading_days_range,
     format_date,
     today,
-    get_5year_ago_date
+    yesterday,
+    get_5year_ago_date,
+    string_formating
 )
 
 __all__ = [
@@ -17,5 +19,7 @@ __all__ = [
     'get_trading_days_range',
     'format_date',
     'today',
-    'get_5year_ago_date'
+    'yesterday',
+    'get_5year_ago_date',
+    'string_formating'
 ] 
