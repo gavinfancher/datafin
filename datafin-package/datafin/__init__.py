@@ -2,7 +2,7 @@
 DataFin - Financial Data Processing Package
 """
 
-__version__ = "0.3.0"
+__version__ = "0.5.0"
 
 
 from .s3_client import S3Client
@@ -21,6 +21,10 @@ from .utils import (
     string_formating
 )
 
+from .etl import (
+    polygon_min_eod_aggs_to_s3
+)   
+
 __all__ = [
     'S3Client',
     'FMPClient',
@@ -31,7 +35,9 @@ __all__ = [
     'get_trading_days_range',
     'format_date',
     'today',
-    'yesterday'
+    'yesterday',
     'get_5year_ago_date',
-    'string_formating'
+    'string_formating',
+    'polygon_min_eod_aggs_to_s3',
+    'polygon_sec_eod_aggs_to_s3'
 ]
