@@ -85,11 +85,6 @@ def main():
         print("Error: Month must be between 1 and 12.")
         return
 
-    dotenv.load_dotenv()
-    polygon_api_key = os.getenv('POLYGON_API_KEY')
-    polygon_client = PolygonClient(polygon_api_key)
-
-    # Get trading days for the specified month
     start_date = f"{args.year}-{args.month:02d}-01"
     if args.month == 12:
         end_date = f"{args.year+1}-01-01"
