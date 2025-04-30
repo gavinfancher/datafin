@@ -109,6 +109,37 @@ class RDSClient:
     #######################################################
 
 
+    def write_dataframe(self, df: pd.DataFrame, table_name: str, if_exists: str = 'append', index: bool = False) -> None:
+        """
+        Write a pandas DataFrame to a database table.
+        
+        Args:
+            df: pandas DataFrame to write to the database
+            table_name: Name of the table to write to
+            if_exists: How to behave if the table already exists
+                - 'fail': Raise a ValueError
+                - 'replace': Drop the table before inserting new values
+                - 'append': Insert new values to the existing table
+            index: Whether to write the DataFrame's index as a column
+        """
+        if not self.database:
+            raise ValueError("No database selected. Use use_database() first.")
+            
+        if if_exists not in ['fail', 'replace', 'append']:
+            raise ValueError("if_exists must be one of: 'fail', 'replace', 'append'")
+            
+        df.to_sql(
+            name=table_name,
+            con=self.engine,
+            if_exists=if_exists,
+            index=False,
+            chunksize=10000
+        )
+
+
+    #######################################################
+
+
     def close(self) -> None:
         """
         docs

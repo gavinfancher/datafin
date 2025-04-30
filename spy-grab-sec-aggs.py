@@ -16,6 +16,8 @@ from datafin import S3Client                     # type: ignore
 from datafin import RDSClient                    # type: ignore
 
 
+pd.set_option('future.no_silent_downcasting', True)
+
 #######################################################
 # Credentials
 #######################################################
@@ -44,93 +46,108 @@ my_s3 = S3Client(
     region_name='us-east-1'
 )
 
+rds = RDSClient(
+    host_connection_name=rds_host_name,
+    user=rds_username,
+    password=rds_password,
+    database='datafin_test_1'
+)
+
 polygon_client = PolygonClient(polygon_api_key)
 
-def fill_missing_seconds(df, date):
-    # First, fix the date_time conversion in the incoming dataframe if needed
-    if 'date_time' in df.columns and '1969' in str(df['date_time'].iloc[0]):
-        # Recreate date_time column properly from timestamp
-        df['date_time'] = pd.to_datetime(df['timestamp'], unit='ns').dt.tz_localize('UTC').dt.tz_convert('America/New_York').dt.tz_localize(None)
-    
-    # Create a complete range of seconds for the day
+def dt_from_timestamp(
+        df: pd.DataFrame,
+        from_col: str, 
+        to_col: str
+    ) -> pd.DataFrame:
+        
+    df[to_col] = pd.to_datetime(df[from_col], unit='ms').dt.tz_localize('UTC').dt.tz_convert('America/New_York').dt.tz_localize(None)
+
+    return df
+
+
+
+def fill_missing_seconds(
+        date,
+        df
+):
+
     start_time = pd.Timestamp(date + ' 04:00:00')
     end_time = pd.Timestamp(date + ' 19:59:59')
-    all_seconds = pd.date_range(start=start_time, end=end_time, freq='s')
-    
-    # Get unique existing seconds
-    existing_seconds = set(df['date_time'])
-    
-    # Create rows only for missing seconds
-    missing_rows = []
-    for second in all_seconds:
-        if second not in existing_seconds:
-            row = {'date_time': second}
-            # Add zeros for numeric columns
-            for col in ['open', 'high', 'low', 'close', 'volume', 'vwap', 'transactions']:
-                if col in df.columns:
-                    row[col] = 0
-            # Add date
-            row['date'] = date
-            missing_rows.append(row)
-    
-    # If there are missing rows, create a DataFrame and append to the original
-    if missing_rows:
-        missing_df = pd.DataFrame(missing_rows)
-        result_df = pd.concat([df, missing_df], ignore_index=True)
-        # Sort by date_time to maintain chronological order
-        result_df = result_df.sort_values('date_time').reset_index(drop=True)
-        return result_df
-    else:
-        # If no missing rows, return the original DataFrame
-        return df
+    all_seconds_df = pd.DataFrame(pd.date_range(start=start_time, end=end_time, freq='s'), columns=['date_time'])
+
+    merge_df = pd.merge(all_seconds_df, df, on='date_time', how='left')
+
+
+    columns_to_fill = [col for col in merge_df.columns if col != 'timestamp']
+    merge_df[columns_to_fill] = merge_df[columns_to_fill].fillna(0).infer_objects(copy=False)
+
+
+    merge_df['timestamp'] = merge_df.apply(
+        lambda row: pd.Timestamp(row['date_time']).timestamp() if pd.isna(row['timestamp']) else row['timestamp'], 
+        axis=1
+    )
+
+    return merge_df
+
+
 
 def process_days(days):
     total_start_time = time.time()
-    print(f"Starting processing of {len(days)} days...")
     
-    df = pd.DataFrame()
+    total_df = pd.DataFrame()
 
     for day in days:
         formatted_day = format_date(day) 
-        print(f"Processing {formatted_day}...")
         
         data = polygon_client.get_eod_second_aggs(
             'SPY',
             formatted_day
         )
         
-            
-        day_df = pd.DataFrame(data)
-        day_df['date'] = formatted_day
-# In the process_days function, change this line:
-    day_df['date_time'] = pd.to_datetime(day_df['timestamp'], unit='ns').dt.tz_localize('UTC').dt.tz_convert('America/New_York').dt.tz_localize(None)
-        
+        temp_df = pd.DataFrame(data)
 
-        day_df = fill_missing_seconds(day_df, formatted_day)
+        dt_df = dt_from_timestamp(
+            temp_df,
+            'timestamp',
+            'date_time'
+        )
+
         
-        df = pd.concat([df, day_df], ignore_index=True)
+        filled_df  = fill_missing_seconds(
+             formatted_day,
+             dt_df
+        )
+        
+        total_df = pd.concat([total_df, filled_df], ignore_index=True)
         print(f"Completed {formatted_day}")
 
-        print(df.head())
-        break
 
-    if df['open'].nunique() == 1:
-        print("issue!")
 
     month = string_formating(days[0].month)
     year = string_formating(days[0].year)
 
     print("\nPosting data to S3...")
     my_s3.post_parquet(
-        data=df,
+        data=total_df,
         path=f'dev/polygon/equities/sec-eod-aggs/raw/year={year}/month={month}',
         file_name=f'raw-spy-{year}-{month}'
     )
-
     print("Done posting to S3!")
+
+    print("\nPosting data to RDS...")
+    rds.write_dataframe(
+        df=total_df,
+        table_name='spy_sec_eod_aggs',
+        if_exists='append',
+    )
+    print("Done posting to RDS!")
+
     total_duration = time.time() - total_start_time
     print(f"\nTotal processing time: {total_duration:.2f} seconds")
     print(f"Average time per day: {total_duration/len(days):.2f} seconds")
+
+
 
 def main():
     parser = argparse.ArgumentParser()
