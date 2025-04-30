@@ -6,78 +6,136 @@ import pandas as pd
 from datetime import datetime
 
 from datafin.utils import (                      # type: ignore
-    get_trading_days_ytd,
     get_trading_days_range,
-    format_date
+    format_date,
+    string_formating
 )
 
 from datafin import PolygonClient                # type: ignore
-from datafin import polygon_min_eod_aggs_to_s3   # type: ignore
+from datafin import S3Client                     # type: ignore
+from datafin import RDSClient                    # type: ignore
 
-def process_days(days, polygon_client):
+
+#######################################################
+# Credentials
+#######################################################
+
+fmp_api_key = os.getenv('FMP_API_KEY')
+
+s3_bucket = os.getenv('PERSONAL_S3_BUCKET_NAME')
+aws_access_key =  os.getenv('PERSONAL_AWS_ACCESS_KEY_ID')
+aws_secret_key =  os.getenv('PERSONAL_AWS_SECRET_ACCESS_KEY_ID')
+
+polygon_api_key = os.getenv('POLYGON_API_KEY')
+
+rds_host_name = os.getenv('RDS_DB_HOST_CONNECTION_NAME')
+rds_username = os.getenv('RDS_DB_USERNAME')
+rds_password = os.getenv('RDS_DB_PASSWORD')
+
+
+#######################################################
+# Clients
+#######################################################
+
+my_s3 = S3Client(
+    bucket_name=s3_bucket,
+    aws_access_key_id=aws_access_key,
+    aws_secret_access_key=aws_secret_key,
+    region_name='us-east-1'
+)
+
+polygon_client = PolygonClient(polygon_api_key)
+
+def fill_missing_seconds(df, date):
+    # First, fix the date_time conversion in the incoming dataframe if needed
+    if 'date_time' in df.columns and '1969' in str(df['date_time'].iloc[0]):
+        # Recreate date_time column properly from timestamp
+        df['date_time'] = pd.to_datetime(df['timestamp'], unit='ns').dt.tz_localize('UTC').dt.tz_convert('America/New_York').dt.tz_localize(None)
+    
+    # Create a complete range of seconds for the day
+    start_time = pd.Timestamp(date + ' 04:00:00')
+    end_time = pd.Timestamp(date + ' 19:59:59')
+    all_seconds = pd.date_range(start=start_time, end=end_time, freq='s')
+    
+    # Get unique existing seconds
+    existing_seconds = set(df['date_time'])
+    
+    # Create rows only for missing seconds
+    missing_rows = []
+    for second in all_seconds:
+        if second not in existing_seconds:
+            row = {'date_time': second}
+            # Add zeros for numeric columns
+            for col in ['open', 'high', 'low', 'close', 'volume', 'vwap', 'transactions']:
+                if col in df.columns:
+                    row[col] = 0
+            # Add date
+            row['date'] = date
+            missing_rows.append(row)
+    
+    # If there are missing rows, create a DataFrame and append to the original
+    if missing_rows:
+        missing_df = pd.DataFrame(missing_rows)
+        result_df = pd.concat([df, missing_df], ignore_index=True)
+        # Sort by date_time to maintain chronological order
+        result_df = result_df.sort_values('date_time').reset_index(drop=True)
+        return result_df
+    else:
+        # If no missing rows, return the original DataFrame
+        return df
+
+def process_days(days):
     total_start_time = time.time()
     print(f"Starting processing of {len(days)} days...")
     
-    all_second_aggs = []
-    
+    df = pd.DataFrame()
+
     for day in days:
         formatted_day = format_date(day) 
-        day_start_time = time.time()
         print(f"Processing {formatted_day}...")
-        try:
-            # Get second aggregates for SPY
-            data = polygon_client.get_eod_second_aggs(
-                formatted_day,  # date first
-                'SPY'          # symbol second
-            )
+        
+        data = polygon_client.get_eod_second_aggs(
+            'SPY',
+            formatted_day
+        )
+        
             
-            # Convert to DataFrame and add date column
-            df = pd.DataFrame(data)
-            df['date'] = formatted_day
-            
-            all_second_aggs.append(df)
-            
-            day_duration = time.time() - day_start_time
-            print(f"Completed {formatted_day} in {day_duration:.2f} seconds")
-        except Exception as e:
-            print(f"Error processing {formatted_day}: {str(e)}")
-            continue
-    
-    if all_second_aggs:
-        # Combine all DataFrames
-        combined_df = pd.concat(all_second_aggs, ignore_index=True)
+        day_df = pd.DataFrame(data)
+        day_df['date'] = formatted_day
+# In the process_days function, change this line:
+    day_df['date_time'] = pd.to_datetime(day_df['timestamp'], unit='ns').dt.tz_localize('UTC').dt.tz_convert('America/New_York').dt.tz_localize(None)
         
-        # Convert timestamp to datetime
-        combined_df['timestamp'] = pd.to_datetime(combined_df['timestamp'], unit='ms')
+
+        day_df = fill_missing_seconds(day_df, formatted_day)
         
-        # Resample to 1-minute intervals
-        combined_df.set_index('timestamp', inplace=True)
-        minute_df = combined_df.resample('1T').agg({
-            'open': 'first',
-            'high': 'max',
-            'low': 'min',
-            'close': 'last',
-            'volume': 'sum',
-            'vwap': 'mean'
-        }).reset_index()
-        
-        # Add date column if not present
-        if 'date' not in minute_df.columns:
-            minute_df['date'] = minute_df['timestamp'].dt.strftime('%Y-%m-%d')
-        
-        # Post to S3
-        print("\nPosting minute aggregates to S3...")
-        polygon_min_eod_aggs_to_s3(minute_df)
-        print("Done posting to S3!")
-    
+        df = pd.concat([df, day_df], ignore_index=True)
+        print(f"Completed {formatted_day}")
+
+        print(df.head())
+        break
+
+    if df['open'].nunique() == 1:
+        print("issue!")
+
+    month = string_formating(days[0].month)
+    year = string_formating(days[0].year)
+
+    print("\nPosting data to S3...")
+    my_s3.post_parquet(
+        data=df,
+        path=f'dev/polygon/equities/sec-eod-aggs/raw/year={year}/month={month}',
+        file_name=f'raw-spy-{year}-{month}'
+    )
+
+    print("Done posting to S3!")
     total_duration = time.time() - total_start_time
     print(f"\nTotal processing time: {total_duration:.2f} seconds")
     print(f"Average time per day: {total_duration/len(days):.2f} seconds")
 
 def main():
-    parser = argparse.ArgumentParser(description='Process SPY second aggregates for specific months and years')
-    parser.add_argument('-y', '--year', type=int, required=True, help='Year to process (e.g., 2024)')
-    parser.add_argument('-m', '--month', type=int, required=True, help='Month to process (1-12)')
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-y', '--year', type=int, required=True)
+    parser.add_argument('-m', '--month', type=int, required=True)
     
     args = parser.parse_args()
 
@@ -96,9 +154,10 @@ def main():
     
     if month_days:
         print(f"\nProcessing {args.year}-{args.month:02d}")
-        process_days(month_days, polygon_client)
+        process_days(month_days)
     else:
         print(f"No trading days found for {args.year}-{args.month:02d}")
 
 if __name__ == "__main__":
+    dotenv.load_dotenv()
     main()
