@@ -1,5 +1,7 @@
 # ignore directories
 .obsidian/
+.idea/
+.vscode/
 __pycache__/
 datfin-venv/
 datfin-package/datafin/__pycache__/
