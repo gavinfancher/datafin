@@ -1,6 +1,0 @@
-boto3
-pandas
-botocore
-requests
-pandas_market_calendars
-sqlalchemy
