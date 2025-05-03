@@ -4,8 +4,10 @@
 .vscode/
 __pycache__/
 datfin-venv/
-datfin-package/datafin/__pycache__/
-datfin-package/datafin.egg-info/
+datfin-package/datafin-package/__pycache__/
+datfin-package/datafin-package/etl/__pycache__/
+datfin-package/datafin-package/utils/__pycache__/
+datfin-package/datafin-package/datafin.egg-info/
 
 # ignore env file where i'm storing api keys locally
 .env
