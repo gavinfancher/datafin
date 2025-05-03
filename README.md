@@ -1,4 +1,4 @@
-# DataFin
+# datafin-package
 
 Welcome!
 
@@ -7,8 +7,8 @@ Welcome!
 
 Start by initiating the virtual environment
 ```bash
-python3 -m venv datafin-venv
-source datafin-venv/bin/activate
+python3.12 -m venv datafin-package-venv
+source datafin-package-venv/bin/activate
 ```
 
 While inside the `data-fin` directory, if you run:

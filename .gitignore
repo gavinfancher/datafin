@@ -1,14 +1,27 @@
-# ignore directories
+# ignore local device config directories
 .obsidian/
 .idea/
 .vscode/
+
+
+# ignore pycache files
 __pycache__/
-datfin-venv/
 datfin-package/datafin-package/__pycache__/
 datfin-package/datafin-package/etl/__pycache__/
 datfin-package/datafin-package/utils/__pycache__/
+
+
+# ignore continous dev package directory
 datfin-package/datafin-package/datafin.egg-info/
 
-# ignore env file where i'm storing api keys locally
+
+# ignore virtual env directory
+datafin-package-venv/
+
+
+# ignore env file where credentials are stored
 .env
+
+
+# ignore mac directory store data
 .DS_Store
