@@ -1,8 +1,0 @@
-2025-05-01 15:49:59,915 - session_20250501_154953_39895 - __main__ - INFO - starting to write to s3
-2025-05-01 15:49:59,916 - session_20250501_154953_39895 - __main__ - INFO - finished writing to s3
-2025-05-01 15:50:14,870 - session_20250501_155008_40016 - __main__ - INFO - starting to write to s3
-2025-05-01 15:50:14,870 - session_20250501_155008_40016 - __main__ - INFO - finished writing to s3
-2025-05-01 15:50:29,564 - session_20250501_155029_40149 - __main__ - INFO - starting to write to s3
-2025-05-01 15:50:35,036 - session_20250501_155029_40149 - __main__ - INFO - finished writing to s3
-2025-05-01 15:51:05,044 - session_20250501_155104_40308 - INFO - starting to write to s3
-2025-05-01 15:51:10,543 - session_20250501_155104_40308 - INFO - finished writing to s3
