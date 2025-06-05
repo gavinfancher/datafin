@@ -6,13 +6,13 @@
 
 # ignore pycache files
 __pycache__/
-datfin-package/datafin-package/__pycache__/
-datfin-package/datafin-package/etl/__pycache__/
-datfin-package/datafin-package/utils/__pycache__/
+datafin-package/__pycache__/
+datafin-package/etl/__pycache__/
+datafin-package/utils/__pycache__/
 
 
 # ignore continous dev package directory
-datfin-package/datafin-package/datafin.egg-info/
+datafin-package/datafin.egg-info/
 
 
 # ignore virtual env directory
