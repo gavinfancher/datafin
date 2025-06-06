@@ -14,7 +14,7 @@ datafin-package/utils/__pycache__/
 # ignore continous dev package directory
 datafin-package/datafin.egg-info/
 datafin-package/build/
-
+datafin-dagster/datafin_dagster.egg-info/
 
 # ignore virtual env directory
 datafin-venv/

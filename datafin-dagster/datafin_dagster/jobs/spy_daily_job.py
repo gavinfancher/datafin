@@ -1,6 +1,6 @@
 from dagster import job, op, In, Out
 
-from datafin import S3Client
+# from datafin import S3Client
 import pandas as pd
 from datetime import datetime
 
@@ -67,7 +67,7 @@ def analyze_spy_data(context, processed_data: pd.DataFrame) -> dict:
     return analysis
 
 @job
-def get_spy_daily_job():
+def get_spy_job():
     """Job to fetch, process, and analyze SPY data"""
     raw_data = fetch_spy_data()
     processed_data = process_spy_data(raw_data)
