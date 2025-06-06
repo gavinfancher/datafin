@@ -13,10 +13,11 @@ datafin-package/utils/__pycache__/
 
 # ignore continous dev package directory
 datafin-package/datafin.egg-info/
+datafin-package/build/
 
 
 # ignore virtual env directory
-datafin-package-venv/
+datafin-venv/
 
 
 # ignore env file where credentials are stored

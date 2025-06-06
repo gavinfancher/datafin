@@ -1,5 +1,7 @@
 boto3==1.37.34
 botocore==1.37.34
+dagster==1.10.19
+dagster-webserver==1.10.19
 numpy==2.2.4
 pandas==2.2.3
 pandas_market_calendars==4.4.0
@@ -16,3 +18,4 @@ mysql-connector-python==9.3.0
 
 # Datafin package
 -e ./datafin-package
+# -e ./datafin-dagster
