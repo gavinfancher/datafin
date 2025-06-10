@@ -1,7 +1,7 @@
-from dagster import asset, job, MaterializeResult
+from dagster import asset, job
 
 
-from datafin import S3Client                     #type: ignore
+from datafin.aws import S3Client                     #type: ignore
 from datafin.utils import string_formating       #type: ignore
 
 # from datafin_dagster.resources.constants import HI

@@ -2,15 +2,17 @@ import io
 from typing import Dict, Any, Optional
 import json
 
-import pandas as pd
 import boto3
-from botocore.config import Config
+import dotenv
+import os
+
+dotenv.load_dotenv()
 
 class SecretsClient:
     def __init__(
             self, 
-            aws_access_key_id: str = None,
-            aws_secret_access_key: str = None,
+            aws_access_key: str = os.getenv('PERSONAL_AWS_ACCESS_KEY'),
+            aws_secret_access_key: str = os.getenv('PERSONAL_AWS_SECRET_ACCESS_KEY'),
             region_name: Optional[str] = 'us-east-1'
     ) -> None:
         """
@@ -19,10 +21,13 @@ class SecretsClient:
 
         self.secrets = boto3.client(
             'secretsmanager',
-            aws_access_key_id=aws_access_key_id,
+            aws_access_key_id=aws_access_key,
             aws_secret_access_key=aws_secret_access_key,
             region_name=region_name
         )
+
+        self.aws_access_key = aws_access_key
+        self.aws_secret_access_key = aws_secret_access_key
 
     
     #######################################################
@@ -61,5 +66,20 @@ class SecretsClient:
             return raw_secret
         
         value = json.loads(raw_secret['SecretString'])['polygon_api_key']
+        return value
+        
+    def get_fmp_api_key(
+            self,
+            raw: bool = False
+    ):
+
+        raw_secret = self.secrets.get_secret_value(
+            SecretId = 'apis/fmp'
+        )
+
+        if raw:
+            return raw_secret
+        
+        value = json.loads(raw_secret['SecretString'])['fmp_api_key']
         return value
         

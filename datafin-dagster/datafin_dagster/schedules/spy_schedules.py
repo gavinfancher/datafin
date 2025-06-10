@@ -5,7 +5,7 @@ from dagster import (
 )
 
 
-from ..jobs.spy_second_aggs_job import spy_second_agg_job
+from ..jobs.spy_open_second_aggs_job import spy_second_agg_job
 
 @schedule(
     job=spy_second_agg_job,
