@@ -76,15 +76,3 @@ class FMPClient:
         )
 
         return response
-
-
-
-
-
-
-
-
-
-
-    def test():
-        return 'test'
