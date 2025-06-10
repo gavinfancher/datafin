@@ -20,7 +20,8 @@ class PolygonClient:
             multiplier: int,
             unit: str,
             _from: datetime,
-            _to: datetime
+            _to: datetime,
+            limit: int = 5000
     ):
         allowed_units = [
             'second',
@@ -32,7 +33,7 @@ class PolygonClient:
             'quarter',
             'year'
         ]
-        assert unit in allowed_units
+        assert unit in allowed_units, f"Invalid unit '{unit}'. Must be one of: {', '.join(allowed_units)}"
 
         aggs = []
         for a in self.client.list_aggs(
@@ -40,7 +41,8 @@ class PolygonClient:
             multiplier=multiplier,
             timespan=unit,
             from_=_from,
-            to=_to
+            to=_to,
+            limit=limit
         ):
             aggs.append(a)
 
