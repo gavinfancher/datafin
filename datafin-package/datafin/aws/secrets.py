@@ -97,7 +97,21 @@ class SecretsClient:
         
         value = json.loads(raw_secret['SecretString'])['fmp_api_key']
         return value
+    
+    def get_fred_api_key(
+            self,
+            raw: bool = False
+    ):
+
+        raw_secret = self.secrets.get_secret_value(
+            SecretId = 'apis/fred'
+        )
+
+        if raw:
+            return raw_secret
         
+        value = json.loads(raw_secret['SecretString'])['fred_api_key']
+        return value
 
     def get_bucket_name(
             self,

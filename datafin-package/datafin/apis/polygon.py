@@ -1,6 +1,8 @@
 from polygon import RESTClient
 
+from typing import Optional
 
+import datetime
 
 class PolygonClient:
     def __init__(
@@ -9,37 +11,36 @@ class PolygonClient:
     ):
         self.api_key = api_key
         self.client = RESTClient(api_key=self.api_key)
-
-
-    def get_eod_aggs(
-            self,
-            date: str,
-            symbol: str
-    ):
-        response = self.client.get_daily_open_close_agg(
-            ticker=symbol,
-            date=date,
-            adjusted="true",
-        )
-
-        return response
     
 
-    def get_eod_second_aggs(
+
+    def get_aggs(
             self,
             symbol: str,
-            date: str
+            multiplier: int,
+            unit: str,
+            _from: datetime,
+            _to: datetime
     ):
+        allowed_units = [
+            'second',
+            'minute',
+            'hour',
+            'day',
+            'week',
+            'month',
+            'quarter',
+            'year'
+        ]
+        assert unit in allowed_units
 
         aggs = []
         for a in self.client.list_aggs(
-            symbol,
-            1,
-            "second",
-            date,
-            date,
-            adjusted="true",
-            sort="asc",
+            ticker=symbol.upper(),
+            multiplier=multiplier,
+            timespan=unit,
+            from_=_from,
+            to=_to
         ):
             aggs.append(a)
 
