@@ -2,13 +2,11 @@
 DataFin - Financial Data Processing Package
 """
 
-__version__ = "0.5.0"
+__version__ = "1.0.0"
 
+from .apis import *
+from .aws import *
 
-from .s3_client import S3Client
-from .fmp_client import FMPClient
-from .polygon_client import PolygonClient
-from .rds_client import RDSClient
 
 from .utils import (
     APICall,
@@ -21,15 +19,13 @@ from .utils import (
     string_formating
 )
 
-from .etl import (
-    polygon_min_eod_aggs_to_s3
-)   
+
 
 __all__ = [
-    'S3Client',
+    'apis'
+    'aws'
     'FMPClient',
     'PolygonClient',
-    'RDSClient',
     'APICall',
     'get_trading_days_ytd',
     'get_trading_days_range',
@@ -37,7 +33,5 @@ __all__ = [
     'today',
     'yesterday',
     'get_5year_ago_date',
-    'string_formating',
-    'polygon_min_eod_aggs_to_s3',
-    'polygon_sec_eod_aggs_to_s3'
+    'string_formating'
 ]
