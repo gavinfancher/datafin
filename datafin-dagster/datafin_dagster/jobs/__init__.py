@@ -1,2 +1,1 @@
 from .full_market_aggs import full_market_minute_aggs_job
-from .spy_open_second_aggs_job import spy_second_agg_job

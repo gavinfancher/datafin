@@ -1,21 +1,28 @@
-from dagster import Definitions
+from dagster import Definitions, EnvVar
 
 #jobs
 from .jobs.full_market_aggs import full_market_minute_aggs_job
-from .jobs.spy_open_second_aggs_job import spy_second_agg_job
 
 
 #schdules
 from .schedules.full_market_scedules import get_polygon_whole_market_minute_aggs_schedule
-from .schedules.spy_schedules import spy_every_second
+
+
+#resources
+from .resources.credentials import SecretsResource
+
 
 defs = Definitions(
     jobs=[
-        full_market_minute_aggs_job,
-        spy_second_agg_job
+        full_market_minute_aggs_job
     ],
     schedules=[
-        get_polygon_whole_market_minute_aggs_schedule,
-        spy_every_second
-    ]
+        get_polygon_whole_market_minute_aggs_schedule
+    ],
+    resources={
+        "secrets": SecretsResource(
+            aws_access_key=EnvVar("PERSONAL_AWS_ACCESS_KEY"),
+            aws_secret_access_key=EnvVar("PERSONAL_AWS_SECRET_ACCESS_KEY")
+        )
+    }
 )

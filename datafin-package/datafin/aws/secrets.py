@@ -68,6 +68,21 @@ class SecretsClient:
         value = json.loads(raw_secret['SecretString'])['polygon_api_key']
         return value
         
+    def get_polygon_aws_key(
+            self,
+            raw: bool = False
+    ):
+
+        raw_secret = self.secrets.get_secret_value(
+            SecretId = 'aws/polygon_key'
+        )
+
+        if raw:
+            return raw_secret
+        
+        value = json.loads(raw_secret['SecretString'])['polygon_aws_key']
+        return value
+    
     def get_fmp_api_key(
             self,
             raw: bool = False
@@ -83,3 +98,17 @@ class SecretsClient:
         value = json.loads(raw_secret['SecretString'])['fmp_api_key']
         return value
         
+
+    def get_bucket_name(
+            self,
+            raw: bool = False
+    ):
+        raw_secret = self.secrets.get_secret_value(
+            SecretId = 'aws/datafin_s3_bucket'
+        )
+
+        if raw:
+            return raw_secret
+        
+        value = json.loads(raw_secret['SecretString'])['datafin_s3_bucket_name']
+        return value
