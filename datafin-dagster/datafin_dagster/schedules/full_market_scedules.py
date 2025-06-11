@@ -7,7 +7,7 @@ from ..jobs.full_market_aggs import full_market_minute_aggs_job
 
 @schedule(
     job = full_market_minute_aggs_job,
-    cron_schedule = '8 14 * * *',
+    cron_schedule = '0 23 * * *',
     execution_timezone ='America/New_York'
 )
 def get_polygon_whole_market_minute_aggs_schedule():
