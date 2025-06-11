@@ -1,20 +1,18 @@
-from dagster import asset, job
+from dagster import asset, op, job, materialize, schedule, Definitions, RunRequest, define_asset_job
 import pandas as pd
 from datetime import datetime
 
 
 from datafin.aws import S3Client                           #type: ignore
 from datafin.utils import (                                #type: ignore
-    now,
     to_ny_time,
     string_formating,
     yesterday
 )                                
 
-from ..resources.credentials import SecretsResource
+from datafin_dagster.resources.credentials import SecretsResource
 
-
-@asset
+@op
 def polygon_full_market_minute_aggs(secrets: SecretsResource) -> pd.DataFrame:
     """
     commment about function
@@ -39,11 +37,12 @@ def polygon_full_market_minute_aggs(secrets: SecretsResource) -> pd.DataFrame:
     )
 
 
-@asset()
-def stored_polygon_full_market_minute_aggs(
-    polygon_full_market_minute_aggs: pd.DataFrame,
-    secrets: SecretsResource
-):
+@op
+def polygon_stored_full_market_minute_aggs(
+    secrets: SecretsResource,
+    polygon_full_market_minute_aggs: pd.DataFrame
+    
+) -> None:
     """
     comment on function
     """
@@ -73,5 +72,26 @@ def stored_polygon_full_market_minute_aggs(
 
 
 @job
-def full_market_minute_aggs_job():
-    stored_polygon_full_market_minute_aggs(polygon_full_market_minute_aggs())
+def polygon_full_market_minute_aggs_job():
+    polygon_stored_full_market_minute_aggs(
+        polygon_full_market_minute_aggs()
+    )
+
+
+@schedule(
+    job = polygon_full_market_minute_aggs_job,
+    cron_schedule = '0 2 * * *',
+    execution_timezone ='America/New_York'
+)
+def get_polygon_whole_market_minute_aggs_schedule():
+    """
+    comment here
+    """
+    return [RunRequest(run_key=None)]
+
+
+
+polygon_full_market_aggs_definition = Definitions(
+    jobs=[polygon_full_market_minute_aggs_job],
+    schedules=[get_polygon_whole_market_minute_aggs_schedule]
+)

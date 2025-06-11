@@ -1,6 +1,4 @@
-from typing import Optional
-
-from dagster import ConfigurableResource, EnvVar
+from dagster import ConfigurableResource
 
 from datafin.aws import SecretsClient                      #type: ignore
 
