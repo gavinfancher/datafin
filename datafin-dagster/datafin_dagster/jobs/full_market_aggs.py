@@ -25,7 +25,7 @@ def polygon_full_market_minute_aggs(secrets: SecretsResource) -> pd.DataFrame:
         is_polygon=True
     )
 
-    ny_dt = to_ny_time(now())
+    ny_dt = to_ny_time(yesterday())
     date_year = string_formating(ny_dt.year)
     date_month = string_formating(ny_dt.month)
     date_day = string_formating(ny_dt.day)
@@ -55,7 +55,7 @@ def stored_polygon_full_market_minute_aggs(
         region_name='us-east-1'
     )
 
-    ny_dt = to_ny_time(now())
+    ny_dt = to_ny_time(yesterday())
     date_year = string_formating(ny_dt.year)
     date_month = string_formating(ny_dt.month)
     date_day = string_formating(ny_dt.day)
