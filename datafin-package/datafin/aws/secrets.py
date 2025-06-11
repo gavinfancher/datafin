@@ -126,3 +126,46 @@ class SecretsClient:
         
         value = json.loads(raw_secret['SecretString'])['datafin_s3_bucket_name']
         return value
+    
+    def get_gmail_address(
+            self,
+            raw: bool = False
+    ):
+        raw_secret = self.secrets.get_secret_value(
+            SecretId = 'gmail/gmail_address'
+        )
+
+        if raw:
+            return raw_secret
+        
+        value = json.loads(raw_secret['SecretString'])['gmail_address']
+        return value
+    
+
+    def get_gmail_app_password(
+            self,
+            raw: bool = False
+    ):
+        raw_secret = self.secrets.get_secret_value(
+            SecretId = 'gmail/app_password'
+        )
+
+        if raw:
+            return raw_secret
+        
+        value = json.loads(raw_secret['SecretString'])['gmail_app_password']
+        return value
+    
+    def get_gmail_send_to_address(
+            self,
+            raw: bool = False
+    ):
+        raw_secret = self.secrets.get_secret_value(
+            SecretId = 'gmail/gmail_send_to_address'
+        )
+
+        if raw:
+            return raw_secret
+        
+        value = json.loads(raw_secret['SecretString'])['gmail_send_to_address']
+        return value
