@@ -9,6 +9,7 @@ polygon-api-client==1.14.5
 pyarrow==19.0.1
 python-dateutil==2.9.0.post0
 python-dotenv==1.1.0
+pytz==2025.2
 requests==2.32.3
 s3transfer==0.11.4
 setuptools==79.0.1

@@ -1,15 +1,13 @@
 import datetime
 import pandas_market_calendars as mcal
 from typing import List, Optional, Tuple
-from dateutil.relativedelta import relativedelta
+import pytz
 
 
 def get_trading_days_ytd(
     less_today: bool = True,
-    format_dates: bool = True,
     exchange: str = 'NYSE'
 ) -> List[str]:
-    
     """
     docs
     """
@@ -31,23 +29,15 @@ def get_trading_days_ytd(
         end_date=end_date
     )
 
-    if format_dates:
-        return [day.strftime('%Y-%m-%d') for day in trading_days]
-    else:
-        return trading_days
+    return trading_days.tolist()
     
-
-#######################################################
-#######################################################
 
 
 def get_trading_days_range(
     start_date: str,
     end_date: str,
-    format_dates: bool = True,
     exchange: str = 'NYSE'
 ) -> List[str]:
-    
     """
     docs
     """
@@ -59,81 +49,53 @@ def get_trading_days_range(
         end_date=end_date
     )
     
-
-    if format_dates:
-        return [day.strftime('%Y-%m-%d') for day in trading_days]
-    else:
-        return trading_days
+    return trading_days
 
 
-#######################################################
-#######################################################
-
-
-def format_date(date: datetime.date) -> str:
-    
+def now() -> datetime:
     """
     docs
     """
     
-    return date.strftime('%Y-%m-%d')
+    return datetime.datetime.now()
 
 
-#######################################################
-#######################################################
-
-def today(format_date: bool = False) -> str:
-    
+def yesterday() -> datetime:
     """
     docs
     """
     
-    if format_date:
-        return datetime.datetime.now().strftime('%Y-%m-%d')
-    else:
-        return datetime.datetime.now()
+    yesterday_dt = now() - datetime.timedelta(days=1)
     
-
-#######################################################
-#######################################################
+    return yesterday_dt
 
 
-def yesterday(format_date: bool = False) -> str:
-    
-    """
-    docs
-    """
-    
-    yesterday_date = today() - datetime.timedelta(days=1)
-    
-    if format_date:
-        return yesterday_date.strftime('%Y-%m-%d')
-    else:
-        return yesterday_date
-
-
-#######################################################
-#######################################################
-
-
-def get_5year_ago_date() -> str:
-    
+def get_5years_ago() -> datetime:
     """
     docs
     """
 
     today = datetime.datetime.now()
-    five_years_ago = today - relativedelta(years=5)
-    result = five_years_ago + datetime.timedelta(days=1)
-    return result.strftime('%Y-%m-%d')
+    five_years_ago = today - datetime.timedelta(years=5)
+    result_dt = five_years_ago + datetime.timedelta(days=1)
+    
+    return result_dt
 
 
-#######################################################
-#######################################################
+def to_ny_time(dt: datetime) -> datetime:
+    """
+    docs
+    """
+    utc_tz = pytz.UTC
+    ny_tz = pytz.timezone('America/New_York')
+    
+    utc_time = dt.astimezone(utc_tz)
+    ny_time = utc_time.astimezone(ny_tz)
+    
+    return ny_time
 
 
 def string_formating(number: int) -> str:
-    
     """
     docs
     """
@@ -142,3 +104,11 @@ def string_formating(number: int) -> str:
         return f"0{number}"
     else:
         return str(number)
+    
+
+def format_date(dt: datetime) -> str:
+    """
+    docs
+    """
+    
+    return dt.strftime('%Y-%m-%d')
