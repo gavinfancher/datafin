@@ -7,8 +7,7 @@
 # ignore pycache files
 __pycache__/
 datafin-package/__pycache__/
-datafin-package/etl/__pycache__/
-datafin-package/utils/__pycache__/
+
 
 
 # ignore continous dev package directory
