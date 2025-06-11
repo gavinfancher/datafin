@@ -1,1 +1,2 @@
 from .full_market_aggs import full_market_minute_aggs_job
+from .spy_open_aggs import polygon_spy_open_minute_to_s3_job

@@ -69,7 +69,7 @@ def stored_polygon_full_market_minute_aggs(
         file_name=my_s3_file_name
     )
 
-    return []
+    return None
 
 
 @job

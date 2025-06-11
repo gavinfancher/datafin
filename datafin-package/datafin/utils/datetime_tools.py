@@ -112,3 +112,31 @@ def format_date(dt: datetime) -> str:
     """
     
     return dt.strftime('%Y-%m-%d')
+
+
+def get_ny_timestamp_for_today_time_range(
+        _from: Tuple,
+        _to: Tuple
+) -> List[int]:
+    
+    date = to_ny_time(now()).date()
+
+    _from_hour = _from[0]
+    _from_min = _from[1]
+    _from_sec = _from[2]
+
+    _to_hour = _to[0]
+    _to_min = _to[1]
+    _to_sec = _to[2]
+
+    naive_from = datetime.datetime.combine(date, datetime.time(_from_hour, _from_min, _from_sec))
+    naive_to = datetime.datetime.combine(date, datetime.time(_to_hour, _to_min, _to_sec))
+
+    ny_tz = pytz.timezone('America/New_York')
+    time_from = ny_tz.localize(naive_from)
+    time_to = ny_tz.localize(naive_to)
+
+    timestamp_from_ms = int(time_from.timestamp() * 1000)
+    timestamp_to_ms = int(time_to.timestamp() * 1000)
+
+    return [timestamp_from_ms, timestamp_to_ms]
