@@ -1,6 +1,6 @@
 import datetime
 import pandas_market_calendars as mcal
-from typing import List, Optional, Tuple
+from typing import List, Tuple
 import pytz
 
 
@@ -140,3 +140,36 @@ def get_ny_timestamp_for_today_time_range(
     timestamp_to_ms = int(time_to.timestamp() * 1000)
 
     return [timestamp_from_ms, timestamp_to_ms]
+
+
+def is_today_a_trading_day(exchange: str = 'NYSE') -> bool:
+    """
+    comment
+    """
+    today_ny = to_ny_time(now()).date()
+    
+    trading_calendar = mcal.get_calendar(exchange)
+    
+    today_formatted = format_date(today_ny)
+    trading_days = trading_calendar.valid_days(
+        start_date=today_formatted,
+        end_date=today_formatted
+    )
+    
+    return len(trading_days) > 0
+
+def is_yesterday_a_trading_day(exchange: str = 'NYSE') -> bool:
+    """
+    comment
+    """
+    yesterday_ny = to_ny_time(yesterday()).date()
+    
+    trading_calendar = mcal.get_calendar(exchange)
+    
+    yeserday_formatted = format_date(yesterday_ny)
+    trading_days = trading_calendar.valid_days(
+        start_date=yeserday_formatted,
+        end_date=yeserday_formatted
+    )
+    
+    return len(trading_days) > 0
