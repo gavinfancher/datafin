@@ -7,7 +7,8 @@ from datafin.aws import S3Client                           #type: ignore
 from datafin.utils import (                                #type: ignore
     to_ny_time,
     string_formating,
-    yesterday
+    yesterday,
+    is_yesterday_a_trading_day
 )                                
 
 from datafin_dagster.resources.credentials import SecretsResource
@@ -87,7 +88,10 @@ def get_polygon_whole_market_minute_aggs_schedule():
     """
     comment here
     """
-    return [RunRequest(run_key=None)]
+    if is_yesterday_a_trading_day():
+        return [RunRequest(run_key=None)]
+    else:
+        return []
 
 
 

@@ -10,7 +10,8 @@ from datafin.utils import (                                #type: ignore
     now,
     to_ny_time,
     string_formating,
-    get_ny_timestamp_for_today_time_range
+    get_ny_timestamp_for_today_time_range,
+    is_today_a_trading_day
 )                                
 
 from datafin_dagster.resources.credentials import SecretsResource
@@ -96,7 +97,10 @@ def polygon_spy_open_minute_schedule():
     """
     comment here
     """
-    return [RunRequest(run_key=None)]
+    if is_today_a_trading_day():
+        return [RunRequest(run_key=None)]
+    else:
+        return []
 
 
 polygon_spy_open_minute_definition = Definitions(
