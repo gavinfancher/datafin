@@ -26,6 +26,6 @@ __all__ = [
     'format_date',
     'string_formating',
     'get_ny_timestamp_for_today_time_range',
-    'is_today_a_trading_day'
+    'is_today_a_trading_day',
     'is_yesterday_a_trading_day'
 ] 
