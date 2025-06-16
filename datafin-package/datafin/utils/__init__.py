@@ -2,6 +2,7 @@
 DataFin utilities module
 """
 
+from .gmail import GmailClient
 from .datetime_tools import (
     get_trading_days_ytd,
     get_trading_days_range,
@@ -17,6 +18,7 @@ from .datetime_tools import (
 )
 
 __all__ = [
+    'GmailClient',
     'get_trading_days_ytd',
     'get_trading_days_range',
     'now',

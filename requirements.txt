@@ -4,7 +4,10 @@ dagster==1.10.19
 dagster-webserver==1.10.19
 numpy==2.2.4
 pandas==2.2.3
+kaleido==0.2.1
 pandas_market_calendars==4.4.0
+pillow==11.2.1
+plotly==6.1.2
 polygon-api-client==1.14.5
 pyarrow==19.0.1
 python-dateutil==2.9.0.post0

@@ -119,9 +119,6 @@ class S3Client:
             memory_map=True,
             coerce_int96_timestamp_unit='ns'
         )
-                
-
-    #######################################################
 
 
     def post_parquet(
@@ -145,9 +142,6 @@ class S3Client:
             Body = buffer.getvalue(),
             ContentType = 'application/parquet'
         )
-
-
-    #######################################################
     
 
     def get_csv_compressed(
@@ -166,3 +160,48 @@ class S3Client:
         )
 
         return pd.read_csv(io.BytesIO(response['Body'].read()), compression='gzip')
+    
+
+    def post_png(
+        self,
+        image_bytes: bytes,
+        path: str,
+        file_name: str
+    ) -> None:
+        
+        """
+        comment
+        """
+
+        self.s3.put_object(
+            Bucket=self.bucket_name,
+            Key= path + '/' + file_name + '.png',
+            Body=image_bytes,
+            ContentType='image/png'
+        )
+
+
+    def get_png(
+        self,
+        path: str,
+        file_name: str
+    ) -> bytes:
+        """
+        
+        """
+        response = self.s3.get_object(
+            Bucket=self.bucket_name,
+            Key= path + '/' + file_name + '.png',
+        )
+        return response['Body'].read()
+
+
+
+    def test(
+            self,
+    ):
+        response = self.get_json(
+            path = 'test',
+            file_name = 'test'
+        )
+        return response
