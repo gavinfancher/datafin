@@ -118,13 +118,13 @@ class SecretsClient:
             raw: bool = False
     ):
         raw_secret = self.secrets.get_secret_value(
-            SecretId = 'aws/s3/bucket-name'
+            SecretId = 'aws/s3/new-bucket-name'
         )
 
         if raw:
             return raw_secret
         
-        value = json.loads(raw_secret['SecretString'])['s3_bucket_new']
+        value = json.loads(raw_secret['SecretString'])['s3_bucket_name']
         return value
     
     def get_gmail_address(
