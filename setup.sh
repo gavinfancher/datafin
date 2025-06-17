@@ -30,6 +30,4 @@ tmux new-session -d -s live -c "$PWD" \; \
     send-keys 'python3.12 -m venv datafin-venv' Enter \; \
     send-keys 'source datafin-venv/bin/activate' Enter \; \
     send-keys 'pip install -r requirements.txt' Enter \; \
-    send-keys 'cd datafin-dagster' Enter \; \
-    send-keys 'dagster dev' Enter \; \
     attach-session -t live
