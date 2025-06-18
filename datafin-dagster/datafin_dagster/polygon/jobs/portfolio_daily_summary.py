@@ -58,7 +58,7 @@ def portfolio_combined_df(
     for symbol in input_list:
         aggs = pg.get_aggs(
             symbol = symbol,
-            multiplier = 15,
+            multiplier = 5,
             unit = 'minute',
             _from = timestamps[0],
             _to = timestamps[1]
@@ -104,21 +104,6 @@ def portfolio_cleaned_df(
     input_df = input_df.reset_index(drop=True)
     
     return input_df
-
-
-# @op
-# def portfolio_chart_prep_df(
-#         input_df: pd.DataFrame
-#         # secrets: SecretsResource
-# ) -> pd.DataFrame:
-    
-#     sorted_df = input_df.sort_values(['symbol', 'datetime_ny'])
-#     latest_closes_per_symbol = sorted_df.groupby('symbol').last().reset_index()
-
-#     performance_df_for_graph = sorted_df[['symbol', 'open', 'high', 'low', 'close', 'datetime_ny']]
-
-#     return performance_df_for_graph
-
 
 @op
 def portfolio_data_prep_df(
@@ -178,10 +163,6 @@ def portfolio_sent_email(
     )
 
 
-
-
-
-
 @job
 def portfolio_daily_summary_job():
     portfolio_sent_email(
@@ -197,6 +178,7 @@ def portfolio_daily_summary_job():
             )
         )
     )
+
 
 @schedule(
     job = portfolio_daily_summary_job,

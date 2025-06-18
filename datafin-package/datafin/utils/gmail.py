@@ -41,33 +41,31 @@ class GmailClient:
         except Exception as e:
             raise Exception(f"Failed to connect to Gmail SMTP: {str(e)}")
     
-    def send_email(self, 
-                   to: Union[str, List[str]], 
-                   subject: str, 
-                   text: str, 
-                   df: Optional[pd.DataFrame] = None,
-                   csv_filename: Optional[str] = None,
-                   png_bytes: Optional[bytes] = None,
-                   png_filename: Optional[str] = None,
-        ) -> bool:
+    def send_email(
+            self, 
+            to: Union[str, List[str]], 
+            subject: str, 
+            text: str, 
+            png_dict: Optional[dict[str, bytes]] = None,
+            df: Optional[pd.DataFrame] = None,
+            csv_filename: Optional[str] = None
+    ) -> None:
         
         """
         """
-
         try:
             msg = MIMEMultipart()
             msg['From'] = self.sender_email
             msg['To'] = ', '.join(to) if isinstance(to, list) else to
             msg['Subject'] = subject
             
-            
             msg.attach(MIMEText(text, 'plain'))
             
             if df is not None:
                 self._attach_dataframe_as_csv(msg, df, csv_filename)
             
-            if png_bytes is not None:
-                self._attach_png(msg, png_bytes, png_filename)
+            if png_dict is not None:
+                self._attach_png_dict(msg, png_dict)
             
             recipients = []
             if isinstance(to, list):
@@ -75,7 +73,6 @@ class GmailClient:
             else:
                 recipients.append(to)
             
-
             server = smtplib.SMTP(self.smtp_server, self.smtp_port)
             server.starttls()
             server.login(self.sender_email, self.app_password)
@@ -86,7 +83,6 @@ class GmailClient:
             
         except Exception as e:
             raise Exception(f"Failed to send email: {str(e)}")
-    
 
     
     def _attach_dataframe_as_csv(
@@ -120,13 +116,31 @@ class GmailClient:
         
         msg.attach(attachment)
     
-    def _attach_png(
+    def _attach_png_dict(
+            self,
+            msg: MIMEMultipart,
+            png_dict: dict[str, bytes]
+    ) -> None:
+        """
+        """
+        for filename, png_bytes in png_dict.items():
+            # Ensure filename has .png extension
+            if not filename.endswith('.png'):
+                filename += '.png'
+                
+            image_attachment = MIMEImage(png_bytes, _subtype='png')
+            image_attachment.add_header(
+                'Content-Disposition', 
+                f'attachment; filename="{filename}"'
+            )
+            msg.attach(image_attachment)
+    
+    def _attach_single_png(
             self,
             msg: MIMEMultipart,
             png_bytes: bytes,
             filename: Optional[str] = None
     ) -> None:
-        
         """
         """
         if filename is None:
@@ -135,7 +149,7 @@ class GmailClient:
         if not filename.endswith('.png'):
             filename += '.png'
         
-        img_attachment = MIMEImage(png_bytes)
+        img_attachment = MIMEImage(png_bytes, _subtype='png')
         img_attachment.add_header(
             'Content-Disposition',
             f'attachment; filename="{filename}"'
