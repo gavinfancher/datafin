@@ -69,8 +69,8 @@ def polygon_spy_open_clean_df_post_to_s3(
     date_month = string_formating(ny_dt.month)
     date_day = string_formating(ny_dt.day)
 
-    my_s3_raw_path = f'dev/polygon/equities/spy/store/market-open/year={date_year}'
-    my_s3_file_name = f'spy-open-{date_year}-{date_month}-{date_day}'
+    my_s3_raw_path = f'v1/data/test'
+    my_s3_file_name = f'spy-open-chart-test'
 
     my_s3.post_parquet(
         data=polygon_spy_open_minute_clean_df,

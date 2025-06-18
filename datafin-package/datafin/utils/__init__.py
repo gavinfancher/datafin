@@ -16,9 +16,13 @@ from .datetime_tools import (
     is_today_a_trading_day,
     is_yesterday_a_trading_day
 )
+from .chart_tools import (
+    func
+)
 
 __all__ = [
     'GmailClient',
+
     'get_trading_days_ytd',
     'get_trading_days_range',
     'now',
@@ -29,5 +33,7 @@ __all__ = [
     'string_formating',
     'get_ny_timestamp_for_today_time_range',
     'is_today_a_trading_day',
-    'is_yesterday_a_trading_day'
+    'is_yesterday_a_trading_day',
+
+    'func'
 ] 

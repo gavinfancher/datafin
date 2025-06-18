@@ -30,7 +30,6 @@ def get_trading_days_ytd(
     )
 
     return trading_days.tolist()
-    
 
 
 def get_trading_days_range(
@@ -157,6 +156,7 @@ def is_today_a_trading_day(exchange: str = 'NYSE') -> bool:
     )
     
     return len(trading_days) > 0
+
 
 def is_yesterday_a_trading_day(exchange: str = 'NYSE') -> bool:
     """
