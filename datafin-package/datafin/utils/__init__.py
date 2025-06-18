@@ -1,5 +1,4 @@
 """
-DataFin utilities module
 """
 
 from .gmail import GmailClient
@@ -17,7 +16,7 @@ from .datetime_tools import (
     is_yesterday_a_trading_day
 )
 from .chart_tools import (
-    func
+    generate_chart
 )
 
 __all__ = [
@@ -35,5 +34,5 @@ __all__ = [
     'is_today_a_trading_day',
     'is_yesterday_a_trading_day',
 
-    'func'
+    'generate_chart'
 ] 

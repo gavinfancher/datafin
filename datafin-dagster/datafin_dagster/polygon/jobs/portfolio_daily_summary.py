@@ -6,11 +6,9 @@ from datafin.aws import S3Client                           #type: ignore
 from datafin.apis import PolygonClient                     #type: ignore
 from datafin.utils import GmailClient                      #type: ignore
 from datafin.utils import (                                #type: ignore
-    now,
-    to_ny_time,
-    string_formating,
     get_ny_timestamp_for_today_time_range,
-    is_today_a_trading_day
+    is_today_a_trading_day,
+    generate_chart
 )                                
 
 from datafin_dagster.resources.credentials import SecretsResource
@@ -91,6 +89,7 @@ def portfolio_with_previous_close_df(
 
     return input_df
 
+
 @op
 def portfolio_cleaned_df(
         input_df: pd.DataFrame
@@ -105,8 +104,9 @@ def portfolio_cleaned_df(
     
     return input_df
 
+
 @op
-def portfolio_data_prep_df(
+def portfolio_data_summary_df(
         input_df: pd.DataFrame
 ) -> pd.DataFrame:
     
@@ -145,9 +145,27 @@ def portfolio_text_for_email(
     return_string = "\n".join(performance_lines)
     return return_string
 
+
+@op
+def chart_generation_for_email(
+    input_df: pd.DataFrame
+) -> dict:
+    
+    symbols = input_df['symbol'].unique()
+
+    chart_dict = {}
+    for i in symbols:
+        symbol_df = input_df[input_df['symbol'] == i]
+        chart = generate_chart(symbol_df, title=i)
+        chart_dict[i] = chart
+
+    return chart_dict
+
+
 @op
 def portfolio_sent_email(
         input_string: str,
+        input_dict: dict,
         secrets: SecretsResource
 ) -> None:
     
@@ -159,25 +177,26 @@ def portfolio_sent_email(
     gmail.send_email(
         to = secrets.client.get_gmail_send_to_address(),
         subject = "today's portfolio performance",
-        text = input_string
+        text = input_string,
+        png_dict = input_dict
     )
 
 
 @job
 def portfolio_daily_summary_job():
-    portfolio_sent_email(
-        portfolio_text_for_email(
-            portfolio_data_prep_df(
-                portfolio_cleaned_df(
-                    portfolio_with_previous_close_df(
-                        portfolio_combined_df(
-                            portfolio_list()
-                        )
-                    )
-                )
-            )
-        )
-    )
+
+
+    portfolio_list_ = portfolio_list()
+    portfolio_df = portfolio_combined_df(portfolio_list_)
+    enriched_df = portfolio_with_previous_close_df(portfolio_df)
+    cleaned_df = portfolio_cleaned_df(enriched_df)
+
+    df_for_email_text = portfolio_data_summary_df(cleaned_df)
+
+
+    email_text = portfolio_text_for_email(df_for_email_text)
+    charts = chart_generation_for_email(cleaned_df)
+    portfolio_sent_email(email_text, charts)
 
 
 @schedule(
