@@ -47,3 +47,14 @@ class PolygonClient:
             aggs.append(a)
 
         return aggs
+    
+
+    def get_previous_close_agg(
+            self,
+            symbol
+    ):
+        aggs = self.client.get_previous_close_agg(
+            ticker=symbol.upper(),
+            adjusted="true",
+        )
+        return aggs
