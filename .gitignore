@@ -25,3 +25,6 @@ datafin-venv/
 
 # ignore mac directory store data
 .DS_Store
+
+
+datafin-warehouse/.$warehouse-architecture.drawio.bkp
